@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX_CITIES 10
+
+int numCities;
+int distance[MAX_CITIES][MAX_CITIES];
+int memo[MAX_CITIES][1 << MAX_CITIES];
+
+int tsp(int currentCity, int visited) {
+    if (visited == (1 << numCities) - 1)
+        return distance[currentCity][0]; // Return to starting city
+    
+    if (memo[currentCity][visited] != -1)
+        return memo[currentCity][visited];
+    
+    int minDistance = INT_MAX;
+    
+    for (int nextCity = 0; nextCity < numCities; ++nextCity) {
+        if (!(visited & (1 << nextCity))) {
+            int newDistance = distance[currentCity][nextCity] + tsp(nextCity, visited | (1 << nextCity));
+            if (newDistance < minDistance)
+                minDistance = newDistance;
+        }
+    }
+    
+    return memo[currentCity][visited] = minDistance;
+}
+
+int main() {
+    printf("Enter the number of cities: ");
+    scanf("%d", &numCities);
+    
+    printf("Enter the distance matrix:\n");
+    for (int i = 0; i < numCities; ++i) {
+        for (int j = 0; j < numCities; ++j) {
+            scanf("%d", &distance[i][j]);
+        }
+    }
+    
+    for (int i = 0; i < MAX_CITIES; ++i)
+        for (int j = 0; j < (1 << MAX_CITIES); ++j)
+            memo[i][j] = -1;
+
+    int optimalRoute = tsp(0, 1); // Start from city 0
+    printf("Optimal route distance: %d\n", optimalRoute);
+
+    return 0;
+}
