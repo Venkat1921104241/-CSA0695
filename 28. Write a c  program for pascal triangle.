@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main() {
+    int numRows;
+
+    printf("Enter the number of rows for Pascal's triangle: ");
+    scanf("%d", &numRows);
+
+    for (int i = 0; i < numRows; i++) {
+        int num = 1;
+        printf("%*s", 2 * (numRows - i), ""); // Print leading spaces
+
+        for (int j = 0; j <= i; j++) {
+            printf("%4d", num);
+            num = num * (i - j) / (j + 1);
+        }
+
+        printf("\n");
+    }
+
+    return 0;
+}
