@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Item {
+    char name[20];
+    int weight;
+    int value;
+    float value_per_weight;
+};
+
+void fractionalKnapsack(struct Item items[], int n, int capacity) {
+    for (int i = 0; i < n; i++) {
+        items[i].value_per_weight = (float)items[i].value / items[i].weight;
+    }
+
+    // Sorting items based on value-to-weight ratio in descending order (using bubble sort)
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < n - i - 1; j++) {
+            if (items[j].value_per_weight < items[j + 1].value_per_weight) {
+                struct Item temp = items[j];
+                items[j] = items[j + 1];
+                items[j + 1] = temp;
+            }
+        }
+    }
+
+    float total_value = 0.0;
+    int current_weight = 0;
+
+    printf("Items selected in the knapsack:\n");
+    for (int i = 0; i < n; i++) {
+        if (current_weight + items[i].weight <= capacity) {
+            printf("Item: %s, Weight: %d, Value: %d\n", items[i].name, items[i].weight, items[i].value);
+            total_value += items[i].value;
+            current_weight += items[i].weight;
+        } else {
+            int remaining_weight = capacity - current_weight;
+            total_value += items[i].value_per_weight * remaining_weight;
+            printf("Item: %s, Weight: %d, Value: %.2f (partial)\n", items[i].name, remaining_weight, items[i].value_per_weight * remaining_weight);
+            break;
+        }
+    }
+
+    printf("Total value in the knapsack: %.2f\n", total_value);
+}
+
+int main() {
+    struct Item items[] = {
+        {"Item1", 2, 10},
+        {"Item2", 3, 5},
+        {"Item3", 5, 15},
+        {"Item4", 7, 7},
+        {"Item5", 1, 6},
+        {"Item6", 4, 18},
+        {"Item7", 1, 3}
+    };
+
+    int n = sizeof(items) / sizeof(items[0]);
+    int knapsack_capacity = 15;
+
+    fractionalKnapsack(items, n, knapsack_capacity);
+
+    return 0;
+}
